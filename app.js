@@ -384,7 +384,7 @@ function renderQuestion(mode="enter"){
         ${q.choices.map((c,i)=> {
           const val = i+1;
           return `
-            <label class="choice">
+            <label class="choice ${selected===val ? "selected" : ""}">
               <input type="radio" name="${q.id}" value="${val}" ${selected===val ? "checked" : ""}/>
               <div><b>${val}</b> · ${c}</div>
             </label>
@@ -396,15 +396,22 @@ function renderQuestion(mode="enter"){
     </div>
   `;
 
-  elHost.querySelectorAll(`input[name="${q.id}"]`).forEach(r => {
-    r.addEventListener("change", (e) => {
-      answers[q.id] = parseInt(e.target.value, 10);
-      updateProgress();
-      updateNav();
-      // 선택하면 자동 다음 이동을 원하면 아래 주석 해제
-      // if (currentIndex < QUESTIONS.length - 1) elNext.click();
-    });
+elHost.querySelectorAll(`label.choice`).forEach(label => {
+  const radio = label.querySelector('input[type="radio"]');
+
+  label.addEventListener("click", () => {
+    // 같은 질문의 모든 카드 선택 해제
+    elHost.querySelectorAll(`label.choice`).forEach(l => l.classList.remove("selected"));
+
+    // 현재 카드 선택
+    radio.checked = true;
+    label.classList.add("selected");
+
+    answers[q.id] = parseInt(radio.value, 10);
+    updateProgress();
+    updateNav();
   });
+});
 }
 
 function animateOut(direction, cb){
@@ -415,13 +422,16 @@ function animateOut(direction, cb){
 }
 
 function updateNav(){
-  elPrev.disabled = currentIndex === 0;
-  elNext.disabled = currentIndex === QUESTIONS.length - 1;
-  elSubmit.disabled = !isAllAnswered();
+  const qid = QUESTIONS[currentIndex].id;
+  const answeredThis = answers[qid] !== undefined;
 
-  // 강제 응답 UX를 원하면 이 줄을 추가:
-  // elNext.disabled = (currentIndex === QUESTIONS.length - 1) || !answers[QUESTIONS[currentIndex].id];
+  elPrev.disabled = currentIndex === 0;
+  elNext.disabled =
+    currentIndex === QUESTIONS.length - 1 || !answeredThis;
+
+  elSubmit.disabled = !isAllAnswered();
 }
+
 
 function updateProgress(){
   const done = Object.keys(answers).length;

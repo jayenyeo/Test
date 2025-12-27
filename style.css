@@ -40,7 +40,7 @@ p{ color: var(--muted); line-height: 1.6; }
 
 .choices{ display:grid; gap: 10px; }
 label.choice{
-  display:flex; gap: 10px; align-items:center;
+  display:flex; gap: 10px; align-items:flex-start;
   padding: 12px 12px; border-radius: 14px;
   border: 1px solid var(--border);
   background: rgba(255,255,255,.02);
@@ -52,7 +52,7 @@ label.choice:hover{
   border-color: rgba(110,168,254,.7);
   background: rgba(110,168,254,.06);
 }
-input[type="radio"]{ margin-top: 0; }
+input[type="radio"]{ margin-top: 3px; }
 
 .nav{ margin-top: 14px; display:flex; justify-content: space-between; gap: 10px; }
 .hr{ height: 1px; background: rgba(255,255,255,.08); margin: 14px 0; }
@@ -88,3 +88,29 @@ input[type="radio"]{ margin-top: 0; }
 .dimlist{ display:grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .dimrow{ display:flex; justify-content: space-between; gap: 8px; }
 .dimrow span:last-child{ font-weight: 800; }
+/* === 카드 버튼 선택 상태 === */
+label.choice.selected{
+  border-color: var(--accent);
+  background: rgba(110,168,254,.18);
+  box-shadow: 0 0 0 1px rgba(110,168,254,.6);
+}
+
+label.choice.selected::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:6px;
+  height:100%;
+  background: var(--accent);
+  border-radius: 14px 0 0 14px;
+}
+
+label.choice{
+  position: relative; /* ← 이 줄 중요 */
+}
+
+/* 라디오 버튼 완전 제거 */
+label.choice input[type="radio"]{
+  display: none;
+}
